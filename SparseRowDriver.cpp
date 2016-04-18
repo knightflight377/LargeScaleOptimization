@@ -22,14 +22,6 @@ int main()
   cout << "Row s contains:" << endl;
   s.print();
 
-  //Test of swapRows function
-  // r.swapRows(s);
-  // cout << "Now swapping rows" << endl;
-  // cout << "Row r is now:" << endl;
-  // r.print();
-  // cout << "Row s is now:" << endl;
-  // s.print();
-
   //Test of deleteEntry function
   cout << "Deleting entry in row r" << endl;
   r.deleteEntry(2);

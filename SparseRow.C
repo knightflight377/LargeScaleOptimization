@@ -16,24 +16,30 @@ typedef std::list< SpRowEnt > SpRow;
 
 class Row
 {
+private:
+  int ncols;
+  double tol;
+  SpRow row;
+
 public:
+
+//Constructor
   Row(int numCols, double tolerance)
     : ncols(numCols), tol(tolerance), row() {}
 
-  /***************************************************/
-  void print()
-  {
+//Print row
+  void print() {
     SpRow::iterator it = row.begin();
-    while (it != row.end())
-      {
+    while (it != row.end()) {
 	cout << (*it).first << "  " << (*it).second << endl;
 	it++;
-      }
+    }
   }
 
-  /***************************************************/
+//Copy constructor  
+//Copies the values from r into row
   Row(const Row &r) {
-    //copy constructor
+
     ncols = r.ncols;
     tol = r.tol;
     row = SpRow();
@@ -47,13 +53,12 @@ public:
       t++;
     }
   }
-  /*********************************************/
-  bool insertElement(int c, double v)
-  // c  --  zero-based column index
-  // v  --  value to be inserted in the column
-  {
+
+//Inserts an element, given a column index c and a value v
+  bool insertElement(int c, double v) {
+
+    //Invalid column index
     if ((c < 0) || (c >= ncols))
-      //invalid column index
 	   return false;  //insertion fails
     
     else {  
@@ -77,8 +82,8 @@ public:
 	     }
 	     if ((*it).first > c)
 	       {
-         //we've made it past column c, insert before it.
-	       // only insert is 'v' is not effectively zero.
+         //we've made it past column c, we need to insert before it.
+	       // only insert if 'v' is not effectively zero.
 	       row.insert(it,SpRowEnt(c,v));
 	       return true;
 	       }
@@ -91,20 +96,22 @@ public:
   }
 }
   
-  /****************************************************************/
-  bool deleteEntry(int c)
-  //Deletes the entry at column index c
-  {
+//Deletes the entry at column index c
+//Since deleting is essentially just inserting a 0, we call the insertElement function
+  bool deleteEntry(int c) {
     return insertElement(c, 0.0);
   }
 
-  /*****************************************************************/
-  bool multiplyRowByScaler(double s)
-  //s is a scaler
-  {
+//This function multiplies the row by a given scaler s
+  bool multiplyRowByScaler(double s) {
+
     SpRow::iterator itt = row.begin();
     //If the scaler provided is within the tolerance, delete every row entry using the built-in clear function
     if (s >= -tol && s <= tol) {
+      while (itt != row.end()) {
+        row.clear();
+        itt++;
+      }
       return false;
     }
     //Otherwise, multiply every entry in the row by the scaler
@@ -117,25 +124,22 @@ public:
     }
   }
 
-  /****************************************************************/
-  SpRow getRow()
-  //gets the instance of row
-  {
+//Gets the instance of row
+  SpRow getRow() {
+
     return row;
   }
 
-  /****************************************************************/
-  void setRow(SpRow r1)
-  //sets the instance row
-  {
+//Sets the instance row
+  void setRow(SpRow r1) {
+
     row = r1;
   }
 
-  /****************************************************************/
+//This function replaces row with row + con*rI
+//rI and row are rows
+//Con is a constant
   bool replaceRow(Row& rI, double con) {
-    //rI and row are rows
-    //con is a constant
-    //This function replaces row with row + con*rI
 
     SpRow::iterator i = rI.getRow().begin();
     SpRow::iterator n = row.begin();
@@ -174,10 +178,4 @@ public:
     //If the function finishes without doing either the initial if or one of the conditions inside the else, then return false
     return false;
   }
-	 
-  /*****************************************************************/  
-private:
-  int ncols;
-  double tol;
-  SpRow row;
 };
