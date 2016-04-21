@@ -38,9 +38,11 @@ class SparseMatrix {
 //Constructor
 SparseMatrix::SparseMatrix (int r, double tolerance) {
 	if (r > 0) {
-		//Initialize rows and t
+		//Initialize rows, ncols, and t
 		rows = r;
+		ncols = r;
 		t = tolerance;
+
 		//Create a null Row pointer
 		Row* rPtr = NULL;
 
@@ -55,6 +57,7 @@ SparseMatrix::SparseMatrix (int r, double tolerance) {
 //Copy constructor
 SparseMatrix:: SparseMatrix(const SparseMatrix& a) {
 	rows = a.rows;
+	ncols = a.ncols;
 	//copy the vector of row pointers
 
 
@@ -76,7 +79,7 @@ SparseMatrix:: ~SparseMatrix() {
 //v is the value to be inserted
 bool SparseMatrix:: insertMatrixElement(int r, int c, double v) {
 	//check that r is a valid row index
-	if (r > 0 && r < rows-1) {
+	if (r >= 0 && r < rows-1) {
 		//access the correct row and call the insertElement function from SparseRow.C
 		(*vectOfRowPointers[r]).insertElement(c, v);
 		return true;
@@ -91,7 +94,7 @@ bool SparseMatrix:: insertMatrixElement(int r, int c, double v) {
 //c is the column index
 bool SparseMatrix:: deleteMatrixElement(int r, int c) {
 	//check that r is a valid row index
-	if (r > 0 && r < rows-1) {
+	if (r >= 0 && r < rows-1) {
 		//access the correct row and call the deleteEntry function from SparseRow.C
 		(*vectOfRowPointers[r]).deleteEntry(c);
 		return true;
@@ -104,7 +107,7 @@ bool SparseMatrix:: deleteMatrixElement(int r, int c) {
 //Multiply every value in a row by a scaler
 bool SparseMatrix:: multiplyByScaler(int r, double scaler) {
 	//check that r is a valid row index
-	if (r > 0 && r < rows-1) {
+	if (r >= 0 && r < rows-1) {
 		//access the correct row and call the multiplyRowByScaler function from SparseRow.C
 		(*vectOfRowPointers[r]).multiplyRowByScaler(scaler);
 		return true;
@@ -118,9 +121,11 @@ bool SparseMatrix:: multiplyByScaler(int r, double scaler) {
 //r1 and r2 are row indices
 bool SparseMatrix:: interchangeRow(int r1, int r2) {
 	//check that r1 and r2 are valid row indices
-	if (r1 > 0 && r1 < rows-1 && r2 > 0 && r2 < rows-1) {
-		//use the built in swap method for vectors
-		vectOfRowPointers[r1].swap(vectOfRowPointers[r2]);
+	if (r1 >= 0 && r1 < rows-1 && r2 >= 0 && r2 < rows-1) {
+		//classic swap
+		Row* temp = vectOfRowPointers[r1];
+		vectOfRowPointers[r1] = vectOfRowPointers[r2];
+		vectOfRowPointers[r2] = temp;
 		return true;
 	}
 	else {
@@ -130,9 +135,9 @@ bool SparseMatrix:: interchangeRow(int r1, int r2) {
 
 //Multiply r1 with r1 + constant*r2
 //r1 and r2 are row indices
-bool SparseMatrix:: combineRows(int r1, int r2 , double constant) {
+// bool SparseMatrix:: combineRows(int r1, int r2 , double constant) {
 
-};
+// };
 
 //Solve the linear system
 //If no solution exists, return the empty vector
@@ -143,9 +148,15 @@ bool SparseMatrix:: combineRows(int r1, int r2 , double constant) {
 //Print the matrix
 void SparseMatrix:: printMatrix() {
 	for (int j = 0; j < rows; j++) {
-		//use the print function from SparseRow.C
-		(*vectOfRowPointers[j]).print();
-		cout << endl;
+		//if a row is empty, print out a row of zeros
+		if ((*vectOfRowPointers[j]).lengthOfRow() == 0) {
+			for (int n = 0; n < rows; n++) {
+				cout << "0" << " " << endl;
+			}
+		}
+		else {
+		//figure out how to print out rows with nonzero entries
+		}
 	}
 };
 
