@@ -79,7 +79,7 @@ SparseMatrix:: ~SparseMatrix() {
 //v is the value to be inserted
 bool SparseMatrix:: insertMatrixElement(int r, int c, double v) {
 	//check that r is a valid row index
-	if (r >= 0 && r < rows-1) {
+	if (r >= 0 && r < rows) {
 		//access the correct row and call the insertElement function from SparseRow.C
 		(*vectOfRowPointers[r]).insertElement(c, v);
 		return true;
@@ -94,7 +94,7 @@ bool SparseMatrix:: insertMatrixElement(int r, int c, double v) {
 //c is the column index
 bool SparseMatrix:: deleteMatrixElement(int r, int c) {
 	//check that r is a valid row index
-	if (r >= 0 && r < rows-1) {
+	if (r >= 0 && r < rows) {
 		//access the correct row and call the deleteEntry function from SparseRow.C
 		(*vectOfRowPointers[r]).deleteEntry(c);
 		return true;
@@ -107,7 +107,7 @@ bool SparseMatrix:: deleteMatrixElement(int r, int c) {
 //Multiply every value in a row by a scaler
 bool SparseMatrix:: multiplyByScaler(int r, double scaler) {
 	//check that r is a valid row index
-	if (r >= 0 && r < rows-1) {
+	if (r >= 0 && r < rows) {
 		//access the correct row and call the multiplyRowByScaler function from SparseRow.C
 		(*vectOfRowPointers[r]).multiplyRowByScaler(scaler);
 		return true;
@@ -121,7 +121,7 @@ bool SparseMatrix:: multiplyByScaler(int r, double scaler) {
 //r1 and r2 are row indices
 bool SparseMatrix:: interchangeRow(int r1, int r2) {
 	//check that r1 and r2 are valid row indices
-	if (r1 >= 0 && r1 < rows-1 && r2 >= 0 && r2 < rows-1) {
+	if (r1 >= 0 && r1 < rows && r2 >= 0 && r2 < rows) {
 		//classic swap
 		Row* temp = vectOfRowPointers[r1];
 		vectOfRowPointers[r1] = vectOfRowPointers[r2];
@@ -151,7 +151,7 @@ void SparseMatrix:: printMatrix() {
 		//if a row is empty, print out a row of zeros
 		if ((*vectOfRowPointers[j]).lengthOfRow() == 0) {
 			for (int n = 0; n < rows; n++) {
-				cout << "0" << " " << endl;
+				cout << "0" << " ";
 			}
 		}
 		else {
@@ -164,4 +164,17 @@ int main() {
 
 	cout << "I got here" << endl;
 
+	SparseMatrix a(2, 0.1);
+	cout << "Matrix a" << endl;
+	a.printMatrix();
+
+	cout << endl;
+	cout << "Inserting into a" << endl;
+	a.insertMatrixElement(1, 1, 2);
+	a.printMatrix();
+
+	cout << endl;
+	cout << "Deleting from a" << endl;
+	a.deleteMatrixElement(1, 1);
+	a.printMatrix();
 };
