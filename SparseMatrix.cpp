@@ -58,8 +58,15 @@ SparseMatrix::SparseMatrix (int r, double tolerance) {
 SparseMatrix:: SparseMatrix(const SparseMatrix& a) {
 	rows = a.rows;
 	ncols = a.ncols;
-	//copy the vector of row pointers
 
+	//Set up the vector with the correct length
+	vectOfRowPointers.resize(rows);
+	for (int m = 0; m < rows; m++) {
+		//copy the pointers
+		vectOfRowPointers[m] = a.vectOfRowPointers[m];
+		//copy the rows the pointers point to
+		//(*vectOfRowPointers[m]) = a.(*vectOfRowPointers[m]);
+	}
 
 };
 
@@ -174,7 +181,14 @@ int main() {
 	a.printMatrix();
 
 	cout << endl;
+	cout << "Multplying by a scaler" << endl;
+	a.multiplyByScaler(1, 3);
+	a.printMatrix();
+	
+	cout << endl;
 	cout << "Deleting from a" << endl;
 	a.deleteMatrixElement(1, 1);
 	a.printMatrix();
+
+
 };
