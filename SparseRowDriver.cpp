@@ -11,8 +11,8 @@ int main()
 
   //Testing the insert function
   cout << "Inserting into row r" << endl;
-  r.insertElement(2, 30);
-  r.insertElement(3, 55);
+  r.insertElement(2, 3);
+  r.insertElement(3, 5);
   cout << "Row r contains:" << endl;
   r.print();
 
@@ -21,6 +21,14 @@ int main()
   s.insertElement(15, 4);
   cout << "Row s contains:" << endl;
   s.print();
+
+  //Test of replaceRow function
+  s.replaceRow(r, 20);
+  cout << "Now replacing S" << endl;
+  cout << "Row s is now:" << endl;
+  s.print();
+  cout << "R is still:" << endl;
+  r.print();
 
   //Test of deleteEntry function
   cout << "Deleting entry in row r" << endl;
@@ -38,17 +46,6 @@ int main()
   Row rcp(r);
   cout << "Now printing rcp, which is a copy of r:" << endl;
   rcp.print();
-
-  //Test of replaceRow function
-  //DEBUG THIS, r still shows the state of r after the multiplyRowByScaler function, rather than the new values it should have
-  r.replaceRow(s, 20);
-  cout << "Now replacing row r" << endl;
-  cout << "Row r is now:" << endl;
-  r.print();
-  r.replaceRow(s, 0.1);
-  cout << "Replacing row r again" << endl;
-  cout << "Now row r is:" << endl;
-  r.print();
 
   cout << "Thanks for testing.  Always a good idea!" << endl;
 };
