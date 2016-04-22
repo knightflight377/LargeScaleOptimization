@@ -31,9 +31,20 @@ public:
   void print() {
     SpRow::iterator it = row.begin();
     while (it != row.end()) {
-	cout << (*it).first << "  " << (*it).second << endl;
-	it++;
+	   cout << (*it).first << "  " << (*it).second << endl;
+	   it++;
     }
+  }
+
+//Get the length of a row, used in SparseMatrix class
+  int lengthOfRow() {
+    SpRow::iterator i = row.begin();
+    int counter = 0;
+    while (i != row.end()) {
+      counter++;
+      i++;
+    }
+    return counter;
   }
 
 //Copy constructor  
@@ -141,41 +152,48 @@ public:
 //Con is a constant
   bool replaceRow(Row& rI, double con) {
 
-    SpRow::iterator i = rI.getRow().begin();
+    SpRow otherRow = rI.getRow();
+    SpRow::iterator i = otherRow.begin();
     SpRow::iterator n = row.begin();
-    //If con is within the tolerance, do nothing since row will remain the same
-    if (con >= -tol && con <= tol)
-	   return true;
-   //Otherwise, replacing rows is going to be needed
-    else {
-	   while (i != rI.getRow().end() && n != row.end()) {
-	//If the column value for rI is less than the column value for row, that means row has a 0 entry
-	     if(((*i).first < (*n).first) || (n == row.end())) {
-	       int columnnumber = (*i).first;
-	       double value = con * (*i).second;
+
+	  while (i != otherRow.end() && n != row.end()) {
+
+	//First case: if the column value for rI is less than the column value for row, that means row has a 0 entry
+	    if(((*i).first < (*n).first) || (n == row.end())) {
+	      int columnnumber = (*i).first;
+	      double value = con * (*i).second;
+
 	    //If the newly calculated value is not within the tolerance, insert it
-	     if (value <= -tol || value >= tol) {
-	       row.insert(n, SpRowEnt(columnnumber, value));
-	     }
-	     i++;
-	   }
-	  //If the column value for row is less than the column value rI, that means that rI has a 0 entry
-	     if(((*n).first < (*i).first) || (i == rI.getRow().end()))
-	       n++;
-	  //If the column values are the same
-	     if((*n).first == (*i).first) {
-	       double nvalue = (*n).second + con * (*i).second;
-	    //If the newly calculated value is not within the tolerance, replace row.second with it
-	       if (nvalue <= -tol || nvalue >= tol) {
-	         (*n).second = (*n).second + con * (*i).second;
-	         }
-	       i++;
-	       n++;
-	     }
+	      if (value <= -tol || value >= tol) {
+	        row.insert(n, SpRowEnt(columnnumber, value));
+	      }
+	      i++;
+	    }
+
+	  //Second case: if the column value for row is less than the column value rI, that means that rI has a 0 entry
+	    if(((*n).first < (*i).first) || (i == otherRow.end())) {
+	      n++;
       }
-      return true;
+
+	  //Third case: if the column values are the same
+	    if((*n).first == (*i).first) {
+	      double nvalue = (*n).second + con * (*i).second;
+	    //If the newly calculated value is not within the tolerance, replace row.second with it
+	      if (nvalue <= -tol || nvalue >= tol) {
+	        (*n).second = nvalue;
+          n++;
+	      }
+        else { //The nvalue is within the tolerance
+          SpRow::iterator nn = n;
+          n++;
+          row.erase(nn);
+        }
+	      i++;
+	    }
     }
-    //If the function finishes without doing either the initial if or one of the conditions inside the else, then return false
+      return true;
+
+    //If the function finishes without doing the while loop, return false
     return false;
   }
 };
