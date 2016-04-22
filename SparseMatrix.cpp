@@ -65,7 +65,8 @@ SparseMatrix:: SparseMatrix(const SparseMatrix& a) {
 		//copy the pointers
 		vectOfRowPointers[m] = a.vectOfRowPointers[m];
 		//copy the rows the pointers point to
-		//(*vectOfRowPointers[m]) = a.(*vectOfRowPointers[m]);
+		Row tempRow = (*vectOfRowPointers[m]);
+		vectOfRowPointers[m] = &tempRow;
 	}
 
 };
@@ -76,7 +77,7 @@ SparseMatrix:: ~SparseMatrix() {
 	for (vector < Row* >::iterator it = vectOfRowPointers.begin(); it != vectOfRowPointers.end(); it++) {
 		delete (*it);
 	}
-	//clear the vector Row pointers itself
+	//clear the vector vectOfRowPointers itself
 	vectOfRowPointers.clear();
 };
 
@@ -143,7 +144,13 @@ bool SparseMatrix:: interchangeRow(int r1, int r2) {
 //Multiply r1 with r1 + constant*r2
 //r1 and r2 are row indices
 // bool SparseMatrix:: combineRows(int r1, int r2 , double constant) {
-
+// 	if (r1 >= 0 && r1 < rows && r2 >= 0 && r2 < rows) {
+// 		(*vectOfRowPointers[r1]).replaceRow((*vectOfRowPointers[r2]), constant);
+// 		return true;
+// 	}
+// 	else {
+// 		return false;
+// 	}
 // };
 
 //Solve the linear system
@@ -184,10 +191,15 @@ int main() {
 	cout << "Multplying by a scaler" << endl;
 	a.multiplyByScaler(1, 3);
 	a.printMatrix();
-	
+
+	cout << endl;
+	cout << "Swapping rows" << endl;
+	a.interchangeRow(1, 0);
+	a.printMatrix();
+
 	cout << endl;
 	cout << "Deleting from a" << endl;
-	a.deleteMatrixElement(1, 1);
+	a.deleteMatrixElement(0, 1);
 	a.printMatrix();
 
 
