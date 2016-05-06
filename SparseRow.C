@@ -113,6 +113,22 @@ public:
     return insertElement(c, 0.0);
   }
 
+//Retrieve the value at a given column index c
+  double retrieveValue(int c) {
+    double entry;
+    SpRow::iterator m = row.begin();
+    //If there's a column index that matches the given c, return the associated value
+    if ((*m).first == c) {
+      entry = (*m).second;
+      return entry;
+    }
+    else {
+      //Otherwise, the value at the given c is 0, so return 0.0
+      entry = 0.0;
+      return entry;
+    }
+  }
+
 //This function multiplies the row by a given scaler s
   bool multiplyRowByScaler(double s) {
 

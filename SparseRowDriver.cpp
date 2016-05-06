@@ -22,6 +22,11 @@ int main()
   cout << "Row s contains:" << endl;
   s.print();
 
+  //Test of retrieveValue function
+  cout << "Now retreiving a value from r" << endl;
+  r.retrieveValue(3);
+  cout << "Value retrieved" << endl;
+
   //Test of replaceRow function
   s.replaceRow(r, 20);
   cout << "Now replacing S" << endl;
