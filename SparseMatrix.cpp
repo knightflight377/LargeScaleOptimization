@@ -31,12 +31,12 @@ class SparseMatrix {
 	bool interchangeRow(int, int); //Switch the given rows
 	bool multiplyByScaler(int, double); //Multiply the given row by a scaler
 	bool combineRows(int, int, double); //Replace row with itself + constant*second row
-	//vector SolveSystem(vector<double> &b); //Solves the linear system
+	vector <double> SolveSystem(vector<double> &b); //Solves the linear system
 	void printMatrix(); //Prints the matrix
 
 	private:
-	//bool pivot(int , vector<double> &b); //Function that performs the pivot operation
-	//bool pivotGetZeros(int, vector<double> &b); //Function to get 0s in every row except the pivot row
+	bool pivot(int , vector<double> &b); //Function that performs the pivot operation
+	bool pivotGetZeros(int, vector<double> &b); //Function to get 0s in every row except the pivot row
 };
 
 //Constructor
@@ -58,19 +58,20 @@ SparseMatrix::SparseMatrix (int r, double tolerance) {
 	}
 };
 
-//Copy constructor, DEBUG THIS!
+//Copy constructor
 SparseMatrix:: SparseMatrix(const SparseMatrix& a) {
 	rows = a.rows;
 	ncols = a.ncols;
 
 	//Set up the vector with the correct length
 	vectOfRowPointers.resize(rows);
+
 	for (int m = 0; m < rows; m++) {
 		//copy the pointers
 		vectOfRowPointers[m] = a.vectOfRowPointers[m];
 		//copy the rows the pointers point to
-		Row tempRow = (*vectOfRowPointers[m]);
-		vectOfRowPointers[m] = &tempRow;
+		Row *rTemp = new Row(*(a.vectOfRowPointers[m]));
+		vectOfRowPointers[m] = rTemp;
 	}
 };
 
@@ -161,18 +162,18 @@ bool SparseMatrix:: combineRows(int r1, int r2 , double constant) {
 //Solve the linear system
 //Uses the pivot function and pivotGetZeros function
 //If no solution exists, return the empty vector
-// vector SparseMatrix:: SolveSystem(vector<double> &b) {
-// 	bool returnValue;
-// 	for (int i = 0; i < rows; i++) {
-// 		bool returnValue = pivot(i, &b);
-// 		if (!returnValue) {
-// 			cout << "There is no solution" << endl;
-// 		}
-// 		else {
-// 			cout << "The solution is: " b << endl;
-// 		}
-// 	}
-// };
+vector <double> SparseMatrix:: SolveSystem(vector<double> &b) {
+	bool returnValue;
+	for (int i = 0; i < rows; i++) {
+		bool returnValue = pivot(i, b);
+		if (!returnValue) {
+			cout << "There is no solution" << endl;
+		}
+		else {
+			cout << "The solution is: " << b << endl;
+		}
+	}
+};
 
 //Print the matrix
 void SparseMatrix:: printMatrix() {
@@ -197,29 +198,29 @@ void SparseMatrix:: printMatrix() {
 //Use retrieveValue in this function
 //This function finds the row with the greatest value at the given column index and pivots
 //c is the column index
-// bool SparseMatrix:: pivot(int c, vector<double> &b) {
-// 	double maxEntry = 0.0;
-// 	int maxEntryRow = 0;
+bool SparseMatrix:: pivot(int c, vector<double> &b) {
+	double maxEntry = 0.0;
+	int maxEntryRow = 0;
 
-// 	for (int i = 0; i < rows; i++) {
-// 		Row currentRow = (*vectOfRowPointers[i]);
-// 		double temp = currentRow.retrieveValue(c);
-// 		if (abs(temp) > maxEntry) {
-// 			maxEntry = temp;
-// 			maxEntryRow = i;
-// 			interchangeRow(c, maxEntryRow);
-// 			double scaler = 1.0/maxEntry;
-// 			currentRow.multiplyRowByScaler(scaler);
-// 			iter_swap(b.begin() + c, b.begin() + maxEntryRow);
-// 			b[maxEntryRow] = b[maxEntryRow]*scaler;
-// 		}
-// 		else {
-// 			return false;
-// 		}
-// 	}
-// 	pivotGetZeros(c, vector<double> &b);
-// 	return true;
-// };
+	for (int i = 0; i < rows; i++) {
+		Row currentRow = (*vectOfRowPointers[i]);
+		double temp = currentRow.retrieveValue(c);
+		if (abs(temp) > maxEntry) {
+			maxEntry = temp;
+			maxEntryRow = i;
+			interchangeRow(c, maxEntryRow);
+			double scaler = 1.0/maxEntry;
+			currentRow.multiplyRowByScaler(scaler);
+			iter_swap(b.begin() + c, b.begin() + maxEntryRow);
+			b[maxEntryRow] = b[maxEntryRow]*scaler;
+		}
+		else {
+			return false;
+		}
+	}
+	pivotGetZeros(c, b);
+	return true;
+};
 
 //Old version of function, DELETE after confirming that new version works
 // bool SparseMatrix:: pivot(int c, vector <double> b){
@@ -256,27 +257,27 @@ void SparseMatrix:: printMatrix() {
 
 //This function ensures that after the pivot is complete, there is a zero at column index c
 // in every row except the pivot row
-// bool SparseMatrix:: pivotGetZeros(int c, vector <double> &b) {
-// 	//Get the row that's being pivoted on, it will needed later
-// 	Row pivotRow = (*vectOfRowPointers[c]);
-// 	//Every other entry in the column must be a zero
-// 	for (int i = 0; i < rows; i++) {
-// 		//Get the current row
-// 		Row currentRow = (*vectOfRowPointers[i]);
-// 		if (i != c) {
-// 			//We want to leave the pivot row alone, which is why (i != c)
-// 			//We want to get the value at i and use it
-// 			double constantScaler = currentRow.retrieveValue(i);
-// 			//Do currentRow = currentRow + (-constantScaler)*pivotRow
-// 			currentRow.replaceRow(pivotRow, -constantScaler);
-// 			//Do the same operation to the b vector
-// 			b[i] = b[i]*(-constantScaler);
-// 		}
-// 	}
-// 	//If the entire for loop runs, return true
-// 		return true;
-// 	return false;
-// };
+bool SparseMatrix:: pivotGetZeros(int c, vector <double> &b) {
+	//Get the row that's being pivoted on, it will needed later
+	Row pivotRow = (*vectOfRowPointers[c]);
+	//Every other entry in the column must be a zero
+	for (int i = 0; i < rows; i++) {
+		//Get the current row
+		Row currentRow = (*vectOfRowPointers[i]);
+		if (i != c) {
+			//We want to leave the pivot row alone, which is why (i != c)
+			//We want to get the value at i and use it
+			double constantScaler = currentRow.retrieveValue(i);
+			//Do currentRow = currentRow + (-constantScaler)*pivotRow
+			currentRow.replaceRow(pivotRow, -constantScaler);
+			//Do the same operation to the b vector
+			b[i] = b[i]*(-constantScaler);
+		}
+	}
+	//If the entire for loop runs, return true
+		return true;
+	return false;
+};
 
 int main() {
 
