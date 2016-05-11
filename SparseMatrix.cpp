@@ -1,8 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include "SparseRow.C"
 #include <cmath>
+#include "SparseRow.C"
 using namespace std;
 
 //This is the SparseMatrix class
@@ -170,9 +170,14 @@ vector <double> SparseMatrix:: SolveSystem(vector<double> &b) {
 			cout << "There is no solution" << endl;
 		}
 		else {
-			cout << "The solution is: " << b << endl;
+			cout << "The solution is: " << endl;
+			//print out the b vector
+			for (int i = 0; i < rows; i++) {
+				cout << b[i] << endl;
+			}
 		}
 	}
+	return b;
 };
 
 //Print the matrix
