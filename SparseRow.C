@@ -5,9 +5,9 @@ using namespace std;
 
 
 //This class is the Row class used in SparseMatrix
-//Each row is a list of pairs, where
-//the first value of the pair is the column index and
-//the second value of the pair is the nonzero entry
+//Each row is a list of pairs
+//The first value of the pair is the column index and
+//The second value of the pair is the nonzero entry
 
 //The pair
 typedef std::pair<int,double> SpRowEnt;
@@ -129,26 +129,20 @@ public:
     }
   }
 
-//This function multiplies the row by a given scaler s
-  bool multiplyRowByScaler(double s) {
-
-    SpRow::iterator itt = row.begin();
-    //If the scaler provided is within the tolerance, delete every row entry using the built-in clear function
+//This function multiplies the row by a given scalar s
+  bool multiplyRowByScalar(double s) {
+    //If the scalar provided is within the tolerance, delete every row entry using the built-in clear function
     if (s >= -tol && s <= tol) {
-      while (itt != row.end()) {
-        row.clear();
-        itt++;
-      }
+      row.clear();
       return false;
     }
-    //Otherwise, multiply every entry in the row by the scaler
-    else {
+    //Otherwise, multiply every entry in the row by the scalar
+    SpRow::iterator itt = row.begin();
       while (itt != row.end()) {
 	       (*itt).second = s * (*itt).second;
 	       itt++;
       }
       return true;
-    }
   }
 
 //Gets the instance of row
