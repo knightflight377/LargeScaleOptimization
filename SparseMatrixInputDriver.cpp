@@ -4,16 +4,15 @@ using namespace std;
 int main() {
 
 	int r;
+	int t;
 	cout << "Please enter the number of rows and the tolerance";
 	cin >> r >> t;
-	if (r > 0) {
 		SparseMatrix big(r, t);
-	}
 
 	int rr;
 	int cc;
 	double vv;
-	cout "Please enter a matrix entry as row #, column #, and value, separated by a space";
+	cout << "Please enter a matrix entry as row #, column #, and value, separated by a space";
 
 	while (rr >= 0) {
 		cin >> rr >> cc >> vv;
