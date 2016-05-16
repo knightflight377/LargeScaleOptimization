@@ -55,7 +55,6 @@ public:
     tol = r.tol;
     row = SpRow();
     
-    SpRow::iterator ii = row.begin();
     SpRow::const_iterator t = (r.row).begin();
     while (t != (r.row).end())
     {
