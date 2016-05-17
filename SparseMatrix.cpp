@@ -163,7 +163,6 @@ bool SparseMatrix:: combineRows(int r1, int r2 , double constant) {
 //Uses the pivot function and pivotGetZeros function
 //If no solution exists, return the empty vector
 vector <double> SparseMatrix:: solveSystem(vector<double> &b) {
-	bool returnValue;
 	for (int i = 0; i < rows; i++) {
 		bool returnValue = pivot(i, b);
 		if (!returnValue) {
@@ -201,19 +200,24 @@ void SparseMatrix:: printMatrix() {
 	cout << endl;
 };
 
-//Use retrieveValue in this function
-//This function finds the row with the greatest value at the given column index and pivots
+//This function finds the row with the greatest value at the given column index and moves that row
+//to the top of the matrix, then divides that row by a scaler so that the value at [c, c] is 1
 //c is the column index
 bool SparseMatrix:: pivot(int c, vector<double> &b) {
 	double maxEntry = 0.0;
 	int maxEntryRow = 0;
 	Row* pivotRow = vectOfRowPointers[c];
+	double tempScalar = 0.0;
 
 	//Find the maximum entry in the given column
 	for (int i = c; i < rows; i++) {
 		Row& currentRow = (*vectOfRowPointers[i]);
 		double temp = currentRow.retrieveValue(c);
 		if (abs(temp) > maxEntry) {
+			//Set temp to tempScaler, this will be used later for the scalar
+			//You don't want to use the abs(temp) as tempScalar because then the multiplyRowByScalar operation
+			//using scalar will have a -1 in the pivot position 
+			tempScalar = temp;
 			maxEntry = abs(temp);
 			maxEntryRow = i;
 		}
@@ -226,36 +230,38 @@ bool SparseMatrix:: pivot(int c, vector<double> &b) {
 	else {
 	//If the maxEntry is not 0, do the following to get a 1 in the pivot point
 		interchangeRow(c, maxEntryRow);
-		cout << "c" << " " << c << "maxEntryRow" << " " << maxEntryRow << endl;
-		cout << "Matrix t after interchanging rows" << endl;
-		printMatrix();
+		// cout << "c" << " " << c << "maxEntryRow" << " " << maxEntryRow << endl;
+		// cout << "Matrix t after interchanging rows" << endl;
+		// printMatrix();
 		pivotRow = vectOfRowPointers[c];
 		cout << "Pivot Row" << endl;
 		pivotRow->print();
-		double scalar = 1.0/maxEntry;
-		cout << "scalar" << " " << scalar << endl;
+		double scalar = 1.0/tempScalar;
+		//double scalar = 1.0/maxEntry;
+		// cout << "scalar" << " " << scalar << endl;
 		pivotRow->multiplyRowByScalar(scalar);
-		cout << "Pivot row again" << endl;
-		pivotRow->print();
-		cout << "Matrix t after multiplying by a scalar" << endl;
-		printMatrix();
+		// cout << "Pivot row again" << endl;
+		// pivotRow->print();
+		// cout << "Matrix t after multiplying by a scalar" << endl;
+		// printMatrix();
 
 		//Do the same swapping operation to right-hand side vector b
 		iter_swap(b.begin() + c, b.begin() + maxEntryRow);
-		cout << "Printing b after doing its swap" << endl;
-		for (int j = 0; j < rows; j++) {
-			cout << b[j] << endl;
-		}
+		// cout << "Printing b after doing its swap" << endl;
+		// for (int j = 0; j < rows; j++) {
+		// 	cout << b[j] << endl;
+		// }
 		//Do the same multiplying by scalar operation to right-hand side vector b
 		b[c] = b[c]*scalar;
-		cout << "Printing out b after multiplying it by the scaler" << endl;
-		for (int j = 0; j < rows; j++) {
-			cout << b[j] << endl;
-		}
+		// cout << "Printing out b after multiplying it by the scaler" << endl;
+		// for (int j = 0; j < rows; j++) {
+		// 	cout << b[j] << endl;
+		// }
 
 		cout << "Last matrix t in pivot function" << endl;
 		printMatrix();
 
+		cout << "Calling pivotGetZeros" << endl;
 		//Call the pivotGetZeros function and return true since pivot was successful
 		pivotGetZeros(c, b);
 		return true;
@@ -266,30 +272,35 @@ bool SparseMatrix:: pivot(int c, vector<double> &b) {
 // in every row except the pivot row
 bool SparseMatrix:: pivotGetZeros(int c, vector <double> &b) {
 	//Get the row that's being pivoted on, it will needed later
+	cout << "c is" << c << endl;
 	Row* pivotRow = vectOfRowPointers[c];	
 	//Row& pivotRow = (*vectOfRowPointers[c]);
 	cout << "pivotRow" << endl;
 	pivotRow->print();
+	cout << "Matrix before for loop" << endl;
+	printMatrix();
 	//Every other entry in the column must be a zero
-	for (int i = c; i < rows; i++) {
+	for (int i = 0; i < rows; i++) {
+		cout << "i =" << " " << i << endl;
 		//Get the current row
 		Row& currentRow = (*vectOfRowPointers[i]);
-		cout << "currentRow in pivotGetZeros function" << endl;
-		currentRow.print();
+		//cout << "currentRow in pivotGetZeros function" << endl;
+		//currentRow.print();
 		if(i != c) {
 			//We want to leave the pivot row alone, which is why (i != c)
 			//We want to get the value at i and use it
-			double constantScalar = currentRow.retrieveValue(i);
+			double constantScalar = currentRow.retrieveValue(c);
 			cout << "constantScalar from pivotGetZeros function"  << " " << constantScalar << endl;
 			//Do currentRow = currentRow + (-constantScalar)*pivotRow
+			cout << "currentRow" << endl;
 			currentRow.replaceRow(*pivotRow, -constantScalar);
-			cout << "currentRow again in pivotGetZeros function" << endl;
+			//cout << "currentRow again in pivotGetZeros function" << endl;
 			currentRow.print();
 			cout << "Matrix t in pivotGetZeros function" << endl;
 			printMatrix();
 			//Do the same operation to the b vector
-			b[i] = b[i]*(-constantScalar);
-			cout << "value of b[i]" << b[i] << endl;
+			b[i] = b[i] + b[c]*(-constantScalar);
+			//cout << "value of b[i]" << b[i] << endl;
 		}
 	}
 	//If the entire for loop runs, return true
