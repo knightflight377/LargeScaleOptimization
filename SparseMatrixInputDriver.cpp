@@ -5,16 +5,19 @@ int main() {
 
 	int r;
 	int t;
+	int rr;
+	int cc;
+	double vv;
 	cout << "Please enter the number of rows and the tolerance";
 	cin >> r >> t;
 		SparseMatrix big(r, t);
 
-	int rr;
-	int cc;
-	double vv;
+	// int rr;
+	// int cc;
+	// double vv;
 	cout << "Please enter a matrix entry as row #, column #, and value, separated by a space";
 
-	while (rr >= 0) {
+	if (rr >= 0) {
 		cin >> rr >> cc >> vv;
 		big.insertMatrixElement(rr, cc, vv);
 	}
@@ -23,7 +26,7 @@ int main() {
 	int bb;
 
 	cout << "Please enter a value for the right-hand side vector";
-	while (bb < r) {
+	if (bb < r) {
 		cin >> bb;
 		rhs.push_back(bb);
 	}
