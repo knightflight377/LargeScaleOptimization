@@ -283,19 +283,22 @@ bool SparseMatrix:: pivotGetZeros(int c, vector <double> &b) {
 	for (int i = 0; i < rows; i++) {
 		cout << "i =" << " " << i << endl;
 		//Get the current row
-		Row& currentRow = (*vectOfRowPointers[i]);
+		Row* currentRow = vectOfRowPointers[i];
 		//cout << "currentRow in pivotGetZeros function" << endl;
 		//currentRow.print();
 		if(i != c) {
 			//We want to leave the pivot row alone, which is why (i != c)
 			//We want to get the value at i and use it
-			double constantScalar = currentRow.retrieveValue(c);
+			cout << "c currently is" << c << endl;
+			//HERE"S THE ISSUE: RETRIEVEVALUE ISN'T GETTING THE CORRECT VALUE
+			cout << "what retrieveValue thinks it's doing" << endl;
+			cout << currentRow->retrieveValue(1) << endl; //when i=0, c=1, this should return 1.333
+			double constantScalar = currentRow->retrieveValue(c);
 			cout << "constantScalar from pivotGetZeros function"  << " " << constantScalar << endl;
 			//Do currentRow = currentRow + (-constantScalar)*pivotRow
-			cout << "currentRow" << endl;
-			currentRow.replaceRow(*pivotRow, -constantScalar);
-			//cout << "currentRow again in pivotGetZeros function" << endl;
-			currentRow.print();
+			currentRow->replaceRow(*pivotRow, -constantScalar);
+			cout << "currentRow after the replaceRow operation in pivotGetZeros function" << endl;
+			currentRow->print();
 			cout << "Matrix t in pivotGetZeros function" << endl;
 			printMatrix();
 			//Do the same operation to the b vector
