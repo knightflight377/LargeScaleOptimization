@@ -23,3 +23,6 @@ SparseRow:	SparseRow.o
 
 SparseRow.o:	SparseRow.C
 	g++ $(OPTS) -c SparseRow.C
+
+clean:
+	rm -f *.o
