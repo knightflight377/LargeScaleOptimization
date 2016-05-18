@@ -117,15 +117,21 @@ public:
     double entry;
     SpRow::iterator m = row.begin();
     //If there's a column index that matches the given c, return the associated value
-    if ((*m).first == c) {
-      entry = (*m).second;
-      return entry;
+    while (m != row.end()) {
+      if ((*m).first == c) {
+        cout << "I'm in the if" << endl;
+        entry = (*m).second;
+        return entry;
+      }
+      //The entry you're looking for is 0
+      if ((*m).first > c) {
+        return 0.0;
+      } 
+      //assert -- (*m).first < c
+      m++;
     }
-    else {
-      //Otherwise, the value at the given c is 0, so return 0.0
-      entry = 0.0;
-      return entry;
-    }
+    //assert you've gone to the end of the row and didn't find the value you were looking for
+    return 0.0;
   }
 
 //This function multiplies the row by a given scalar s
