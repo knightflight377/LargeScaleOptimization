@@ -230,33 +230,18 @@ bool SparseMatrix:: pivot(int c, vector<double> &b) {
 	else {
 	//If the maxEntry is not 0, do the following to get a 1 in the pivot point
 		interchangeRow(c, maxEntryRow);
-		// cout << "c" << " " << c << "maxEntryRow" << " " << maxEntryRow << endl;
-		// cout << "Matrix t after interchanging rows" << endl;
-		// printMatrix();
 		pivotRow = vectOfRowPointers[c];
+
 		cout << "Pivot Row" << endl;
 		pivotRow->print();
 		double scalar = 1.0/tempScalar;
-		//double scalar = 1.0/maxEntry;
-		// cout << "scalar" << " " << scalar << endl;
 		pivotRow->multiplyRowByScalar(scalar);
-		// cout << "Pivot row again" << endl;
-		// pivotRow->print();
-		// cout << "Matrix t after multiplying by a scalar" << endl;
-		// printMatrix();
 
 		//Do the same swapping operation to right-hand side vector b
 		iter_swap(b.begin() + c, b.begin() + maxEntryRow);
-		// cout << "Printing b after doing its swap" << endl;
-		// for (int j = 0; j < rows; j++) {
-		// 	cout << b[j] << endl;
-		// }
+
 		//Do the same multiplying by scalar operation to right-hand side vector b
 		b[c] = b[c]*scalar;
-		// cout << "Printing out b after multiplying it by the scaler" << endl;
-		// for (int j = 0; j < rows; j++) {
-		// 	cout << b[j] << endl;
-		// }
 
 		cout << "Last matrix t in pivot function" << endl;
 		printMatrix();
@@ -274,7 +259,7 @@ bool SparseMatrix:: pivotGetZeros(int c, vector <double> &b) {
 	//Get the row that's being pivoted on, it will needed later
 	cout << "c is" << c << endl;
 	Row* pivotRow = vectOfRowPointers[c];	
-	//Row& pivotRow = (*vectOfRowPointers[c]);
+
 	cout << "pivotRow" << endl;
 	pivotRow->print();
 	cout << "Matrix before for loop" << endl;
@@ -284,15 +269,10 @@ bool SparseMatrix:: pivotGetZeros(int c, vector <double> &b) {
 		cout << "i =" << " " << i << endl;
 		//Get the current row
 		Row* currentRow = vectOfRowPointers[i];
-		//cout << "currentRow in pivotGetZeros function" << endl;
-		//currentRow.print();
 		if(i != c) {
 			//We want to leave the pivot row alone, which is why (i != c)
 			//We want to get the value at i and use it
 			cout << "c currently is" << c << endl;
-			//HERE"S THE ISSUE: RETRIEVEVALUE ISN'T GETTING THE CORRECT VALUE
-			cout << "what retrieveValue thinks it's doing" << endl;
-			cout << currentRow->retrieveValue(1) << endl; //when i=0, c=1, this should return 1.333
 			double constantScalar = currentRow->retrieveValue(c);
 			cout << "constantScalar from pivotGetZeros function"  << " " << constantScalar << endl;
 			//Do currentRow = currentRow + (-constantScalar)*pivotRow
@@ -303,7 +283,6 @@ bool SparseMatrix:: pivotGetZeros(int c, vector <double> &b) {
 			printMatrix();
 			//Do the same operation to the b vector
 			b[i] = b[i] + b[c]*(-constantScalar);
-			//cout << "value of b[i]" << b[i] << endl;
 		}
 	}
 	//If the entire for loop runs, return true
