@@ -17,14 +17,14 @@ typedef std::list< SpRowEnt > SpRow;
 class Row
 {
 private:
-  int ncols;
+  unsigned int ncols;
   double tol;
   SpRow row;
 
 public:
 
 //Constructor
-  Row(int numCols, double tolerance)
+  Row(unsigned int numCols, double tolerance)
     : ncols(numCols), tol(tolerance), row() {}
 
 //Print row
@@ -65,10 +65,10 @@ public:
   }
 
 //Inserts an element, given a column index c and a value v
-  bool insertElement(int c, double v) {
+  bool insertElement(unsigned int c, double v) {
 
     //Invalid column index
-    if ((c < 0) || (c >= ncols))
+    if (c >= ncols)
 	   return false;  //insertion fails
     
     else {  
@@ -108,12 +108,12 @@ public:
   
 //Deletes the entry at column index c
 //Since deleting is essentially just inserting a 0, we call the insertElement function
-  bool deleteEntry(int c) {
+  bool deleteEntry(unsigned int c) {
     return insertElement(c, 0.0);
   }
 
 //Retrieve the value at a given column index c
-  double retrieveValue(int c) {
+  double retrieveValue(unsigned int c) {
     double entry;
     SpRow::iterator m = row.begin();
     //If there's a column index that matches the given c, return the associated value
@@ -175,7 +175,7 @@ public:
 
 	//First case: if the column value for rI is less than the column value for row, that means row has a 0 entry
 	    if(((*i).first < (*n).first) || (n == row.end())) {
-	      int columnnumber = (*i).first;
+	      unsigned int columnnumber = (*i).first;
 	      double value = con * (*i).second;
 
 	    //If the newly calculated value is not within the tolerance, insert it

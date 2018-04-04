@@ -6,7 +6,7 @@ int main()
   Row r(20,0.1);
   Row s(35, 0.5);
 
-  int col=1;
+  unsigned int col=1;
   double val;
 
   //Testing the insert function
@@ -41,9 +41,9 @@ int main()
   cout << "Row r is now:" << endl;
   r.print();
 
-  //Test of multiplyRowByScaler function
+  //Test of multiplyRowByScalar function
   cout << "Now multiplying r by a scaler of 3" << endl;
-  r.multiplyRowByScaler(3);
+  r.multiplyRowByScalar(3);
   cout << "Row r is now:" << endl;
   r.print();
 

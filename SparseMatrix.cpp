@@ -12,36 +12,35 @@ using namespace std;
 class SparseMatrix {
 	public:
 	//Constructors--both the initial and the copy constructor
-	SparseMatrix (int, double);
+	SparseMatrix (unsigned int, double);
 	SparseMatrix (const SparseMatrix &a);
 
 	//Destructor
 	~SparseMatrix();
 
 	//Variables
-	int rows; //Number of rows in matrix A
-	int ncols; //Number of columns in matrix A
+	unsigned int rows; //Number of rows in matrix A
+	unsigned int ncols; //Number of columns in matrix A
 	vector <double> b; //The vector of structural constraint values, pass this as an argument to solveSystem
 	double t; //This is the zero tolerance
 	vector < Row* > vectOfRowPointers; //The vector of Row pointers
 
 	//Methods
-	bool insertMatrixElement(int, int, double); //insert the given element into the specified position in A
-	bool deleteMatrixElement(int, int); //delete the element at the given position
-	bool interchangeRow(int, int); //Switch the given rows
-	bool multiplyByScalar(int, double); //Multiply the given row by a scalar
-	bool combineRows(int, int, double); //Replace row with itself + constant*second row
+	bool insertMatrixElement(unsigned int, unsigned int, double); //insert the given element into the specified position in A
+	bool deleteMatrixElement(unsigned int, unsigned int); //delete the element at the given position
+	bool interchangeRow(unsigned int, unsigned int); //Switch the given rows
+	bool multiplyByScalar(unsigned int, double); //Multiply the given row by a scalar
+	bool combineRows(unsigned int, unsigned int, double); //Replace row with itself + constant*second row
 	vector <double> solveSystem(vector<double> &b); //Solves the linear system
 	void printMatrix(); //Prints the matrix
 
 	private:
-	bool pivot(int , vector<double> &b); //Function that performs the pivot operation
-	bool pivotGetZeros(int, vector<double> &b); //Function to get 0s in every row except the pivot row
+	bool pivot(unsigned int , vector<double> &b); //Function that performs the pivot operation
+	bool pivotGetZeros(unsigned int, vector<double> &b); //Function to get 0s in every row except the pivot row
 };
 
 //Constructor
-SparseMatrix::SparseMatrix (int r, double tolerance) {
-	if (r > 0) {
+SparseMatrix::SparseMatrix (unsigned int r, double tolerance) {
 		//Initialize rows, ncols, and t
 		rows = r;
 		ncols = r;
@@ -55,7 +54,6 @@ SparseMatrix::SparseMatrix (int r, double tolerance) {
 			rPtr = new Row(rows, t);
 			vectOfRowPointers.push_back(rPtr);
 		}
-	}
 };
 
 //Copy constructor
@@ -89,9 +87,9 @@ SparseMatrix:: ~SparseMatrix() {
 //r is the row index
 //c is the column index
 //v is the value to be inserted
-bool SparseMatrix:: insertMatrixElement(int r, int c, double v) {
+bool SparseMatrix:: insertMatrixElement(unsigned int r, unsigned int c, double v) {
 	//check that r is a valid row index
-	if (r >= 0 && r < rows) {
+	if (r < rows) {
 		//access the correct row and call the insertElement function from SparseRow.C
 		(*vectOfRowPointers[r]).insertElement(c, v);
 		return true;
@@ -104,9 +102,9 @@ bool SparseMatrix:: insertMatrixElement(int r, int c, double v) {
 //Delete the element at the given matrix position
 //r is the row index
 //c is the column index
-bool SparseMatrix:: deleteMatrixElement(int r, int c) {
+bool SparseMatrix:: deleteMatrixElement(unsigned int r, unsigned int c) {
 	//check that r is a valid row index
-	if (r >= 0 && r < rows) {
+	if (r < rows) {
 		//access the correct row and call the deleteEntry function from SparseRow.C
 		(*vectOfRowPointers[r]).deleteEntry(c);
 		return true;
@@ -117,9 +115,9 @@ bool SparseMatrix:: deleteMatrixElement(int r, int c) {
 }
 
 //Multiply every value in a row by a scaler
-bool SparseMatrix:: multiplyByScalar(int r, double scalar) {
+bool SparseMatrix:: multiplyByScalar(unsigned int r, double scalar) {
 	//check that r is a valid row index
-	if (r >= 0 && r < rows) {
+	if (r < rows) {
 		//access the correct row and call the multiplyRowByScaler function from SparseRow.C
 		(*vectOfRowPointers[r]).multiplyRowByScalar(scalar);
 		return true;
@@ -131,9 +129,9 @@ bool SparseMatrix:: multiplyByScalar(int r, double scalar) {
 
 //Swap the given rows
 //r1 and r2 are row indices
-bool SparseMatrix:: interchangeRow(int r1, int r2) {
+bool SparseMatrix:: interchangeRow(unsigned int r1, unsigned int r2) {
 	//check that r1 and r2 are valid row indices
-	if (r1 >= 0 && r1 < rows && r2 >= 0 && r2 < rows) {
+	if (r1 < rows && r2 < rows) {
 		//classic swap
 		Row* temp = vectOfRowPointers[r1];
 		vectOfRowPointers[r1] = vectOfRowPointers[r2];
@@ -147,9 +145,9 @@ bool SparseMatrix:: interchangeRow(int r1, int r2) {
 
 //Multiply r1 with r1 + constant*r2
 //r1 and r2 are row indices
-bool SparseMatrix:: combineRows(int r1, int r2 , double constant) {
+bool SparseMatrix:: combineRows(unsigned int r1, unsigned int r2 , double constant) {
 	//check that r1 and r2 are valid row indices
-	if (r1 >= 0 && r1 < rows && r2 >= 0 && r2 < rows) {
+	if (r1 < rows && r2 < rows) {
 		//get the rows and call replaceRow from SparseRow.C
 		(*vectOfRowPointers[r1]).replaceRow((*vectOfRowPointers[r2]), constant);
 		return true;
@@ -203,7 +201,7 @@ void SparseMatrix:: printMatrix() {
 //This function finds the row with the greatest value at the given column index and moves that row
 //to the top of the matrix, then divides that row by a scaler so that the value at [c, c] is 1
 //c is the column index
-bool SparseMatrix:: pivot(int c, vector<double> &b) {
+bool SparseMatrix:: pivot(unsigned int c, vector<double> &b) {
 	double maxEntry = 0.0;
 	int maxEntryRow = 0;
 	Row* pivotRow = vectOfRowPointers[c];
@@ -255,7 +253,7 @@ bool SparseMatrix:: pivot(int c, vector<double> &b) {
 
 //This function ensures that after the pivot is complete, there is a zero at column index c
 // in every row except the pivot row
-bool SparseMatrix:: pivotGetZeros(int c, vector <double> &b) {
+bool SparseMatrix:: pivotGetZeros(unsigned int c, vector <double> &b) {
 	//Get the row that's being pivoted on, it will needed later
 	cout << "c is" << c << endl;
 	Row* pivotRow = vectOfRowPointers[c];	
