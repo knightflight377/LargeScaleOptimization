@@ -6,9 +6,6 @@ int main()
   Row r(20,0.1);
   Row s(35, 0.5);
 
-  unsigned int col=1;
-  double val;
-
   //Testing the insert function
   cout << "Inserting into row r" << endl;
   r.insertElement(2, 3);
