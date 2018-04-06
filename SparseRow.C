@@ -10,7 +10,7 @@ using namespace std;
 //The second value of the pair is the nonzero entry
 
 //The pair
-typedef std::pair<int,double> SpRowEnt;
+typedef std::pair<unsigned int,double> SpRowEnt;
 //The row
 typedef std::list< SpRowEnt > SpRow;
 
