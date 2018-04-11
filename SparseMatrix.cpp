@@ -91,7 +91,7 @@ bool SparseMatrix:: insertMatrixElement(unsigned int r, unsigned int c, double v
 	//check that r is a valid row index
 	if (r < rows) {
 		//access the correct row and call the insertElement function from SparseRow.C
-		(*vectOfRowPointers[r]).insertElement(c, v);
+		vectOfRowPointers[r]->insertElement(c, v);
 		return true;
 	}
 	else {
@@ -106,7 +106,7 @@ bool SparseMatrix:: deleteMatrixElement(unsigned int r, unsigned int c) {
 	//check that r is a valid row index
 	if (r < rows) {
 		//access the correct row and call the deleteEntry function from SparseRow.C
-		(*vectOfRowPointers[r]).deleteEntry(c);
+		vectOfRowPointers[r]->deleteEntry(c);
 		return true;
 	}
 	else {
@@ -119,7 +119,7 @@ bool SparseMatrix:: multiplyByScalar(unsigned int r, double scalar) {
 	//check that r is a valid row index
 	if (r < rows) {
 		//access the correct row and call the multiplyRowByScaler function from SparseRow.C
-		(*vectOfRowPointers[r]).multiplyRowByScalar(scalar);
+		vectOfRowPointers[r]->multiplyRowByScalar(scalar);
 		return true;
 	}
 	else {
@@ -149,7 +149,7 @@ bool SparseMatrix:: combineRows(unsigned int r1, unsigned int r2 , double consta
 	//check that r1 and r2 are valid row indices
 	if (r1 < rows && r2 < rows) {
 		//get the rows and call replaceRow from SparseRow.C
-		(*vectOfRowPointers[r1]).replaceRow((*vectOfRowPointers[r2]), constant);
+		vectOfRowPointers[r1]->replaceRow((*vectOfRowPointers[r2]), constant);
 		return true;
 	}
 	else {
@@ -181,12 +181,12 @@ vector <double> SparseMatrix:: solveSystem(vector<double> &b) {
 void SparseMatrix:: printMatrix() {
 	for (int j = 0; j < rows; j++) {
 		//Get each row and set up an iterator
-		SpRow rprint = (*vectOfRowPointers[j]).getRow();
+		SpRow rprint = vectOfRowPointers[j]->getRow();
 		SpRow:: iterator it = rprint.begin();
 		for (int m = 0; m < rows; m++) {
 			//If the column index exists in the row, then the associated value is nonzero
-			if (it != rprint.end() && (*it).first == m) {
-				cout << (*it).second << " ";
+			if (it != rprint.end() && it->first == m) {
+				cout << it->second << " ";
 				it++;
 			}
 			else {
