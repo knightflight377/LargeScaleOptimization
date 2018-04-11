@@ -31,7 +31,7 @@ public:
   void print() {
     SpRow::iterator it = row.begin();
     while (it != row.end()) {
-	   cout << (*it).first << "  " << (*it).second << endl;
+	   cout << it->first << "  " << it->second << endl;
 	   it++;
     }
   }
@@ -76,7 +76,7 @@ public:
       SpRow::iterator it = row.begin();
       while (it != row.end()) {
         //it points to a genuine row entry
-	     if ((*it).first == c)
+	     if (it->first == c)
 	       { 
       //update this column
 	      //delete this column if 'v' is effectively zero
@@ -86,11 +86,11 @@ public:
 	       }
 	     else {
 	      //if v is not within the tolerance, update it
-	       (*it).second = v;
+	       it->second = v;
 	       return true;
 	       }
 	     }
-	     if ((*it).first > c)
+	     if (it->first > c)
 	       {
          //we've made it past column c, we need to insert before it.
 	       // only insert if 'v' is not effectively zero.
@@ -118,18 +118,18 @@ public:
     SpRow::iterator m = row.begin();
     //If there's a column index that matches the given c, return the associated value
     while (m != row.end()) {
-      if ((*m).first == c) {
+      if (m->first == c) {
         cout << "I'm in the if" << endl;
-        entry = (*m).second;
+        entry = m->second;
         return entry;
       }
       //The entry you're looking for is 0
-      if ((*m).first > c) {
+      if (m->first > c) {
         return 0.0;
       } 
-      //assert -- (*m).first < c
+      //assert -- m->first < c
       m++;
-    }
+}
     //assert you've gone to the end of the row and didn't find the value you were looking for
     return 0.0;
   }
@@ -144,7 +144,7 @@ public:
     //Otherwise, multiply every entry in the row by the scalar
     SpRow::iterator itt = row.begin();
       while (itt != row.end()) {
-	       (*itt).second = s * (*itt).second;
+	       itt->second = s * itt->second;
 	       itt++;
       }
       return true;
@@ -174,9 +174,9 @@ public:
 	  while (i != otherRow.end() && n != row.end()) {
 
 	//First case: if the column value for rI is less than the column value for row, that means row has a 0 entry
-	    if(((*i).first < (*n).first) || (n == row.end())) {
-	      unsigned int columnnumber = (*i).first;
-	      double value = con * (*i).second;
+	    if((i->first < n->first) || (n == row.end())) {
+	      unsigned int columnnumber = i->first;
+	      double value = con * i->second;
 
 	    //If the newly calculated value is not within the tolerance, insert it
 	      if (value <= -tol || value >= tol) {
@@ -186,16 +186,16 @@ public:
 	    }
 
 	  //Second case: if the column value for row is less than the column value rI, that means that rI has a 0 entry
-	    if(((*n).first < (*i).first) || (i == otherRow.end())) {
+	    if((n->first < i->first) || (i == otherRow.end())) {
 	      n++;
       }
 
 	  //Third case: if the column values are the same
-	    if((*n).first == (*i).first) {
-	      double nvalue = (*n).second + con * (*i).second;
+	    if(n->first == i->first) {
+	      double nvalue = n->second + con * i->second;
 	    //If the newly calculated value is not within the tolerance, replace row.second with it
 	      if (nvalue <= -tol || nvalue >= tol) {
-	        (*n).second = nvalue;
+	        n->second = nvalue;
           n++;
 	      }
         else { //The nvalue is within the tolerance
