@@ -25,6 +25,7 @@ int main()
   cout << "Value retrieved" << endl;
 
   //Test of replaceRow function
+  //Row s should become (2, 60) (3, 100) (12, 6) (15, 4)
   s.replaceRow(r, 20);
   cout << "Now replacing S" << endl;
   cout << "Row s is now:" << endl;
@@ -39,12 +40,14 @@ int main()
   r.print();
 
   //Test of multiplyRowByScalar function
+  //Row r should become (3, 15)
   cout << "Now multiplying r by a scaler of 3" << endl;
   r.multiplyRowByScalar(3);
   cout << "Row r is now:" << endl;
   r.print();
 
   //Test of copy constructor
+  //Row rcp should be (3, 15)
   Row rcp(r);
   cout << "Now printing rcp, which is a copy of r:" << endl;
   rcp.print();
