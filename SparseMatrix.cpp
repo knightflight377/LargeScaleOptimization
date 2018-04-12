@@ -50,7 +50,7 @@ SparseMatrix::SparseMatrix (unsigned int r, double tolerance) {
 		Row* rPtr = NULL;
 
 		//Build the Row pointer vector
-		for (int i = 0; i < rows; i++) {
+		for (unsigned int i = 0; i < rows; i++) {
 			rPtr = new Row(rows, t);
 			vectOfRowPointers.push_back(rPtr);
 		}
@@ -64,7 +64,7 @@ SparseMatrix:: SparseMatrix(const SparseMatrix& a) {
 	//Set up the vector with the correct length
 	vectOfRowPointers.resize(rows);
 
-	for (int m = 0; m < rows; m++) {
+	for (unsigned int m = 0; m < rows; m++) {
 		//copy the pointers
 		vectOfRowPointers[m] = a.vectOfRowPointers[m];
 		//copy the rows the pointers point to
@@ -169,7 +169,7 @@ vector <double> SparseMatrix:: solveSystem(vector<double> &b) {
 		else {
 			cout << "The solution is: " << endl;
 			//print out the b vector
-			for (int i = 0; i < rows; i++) {
+			for (unsigned int i = 0; i < rows; i++) {
 				cout << b[i] << endl;
 			}
 		}
@@ -179,11 +179,11 @@ vector <double> SparseMatrix:: solveSystem(vector<double> &b) {
 
 //Print the matrix
 void SparseMatrix:: printMatrix() {
-	for (int j = 0; j < rows; j++) {
+	for (unsigned int j = 0; j < rows; j++) {
 		//Get each row and set up an iterator
 		SpRow rprint = vectOfRowPointers[j]->getRow();
 		SpRow:: iterator it = rprint.begin();
-		for (int m = 0; m < rows; m++) {
+		for (unsigned int m = 0; m < rows; m++) {
 			//If the column index exists in the row, then the associated value is nonzero
 			if (it != rprint.end() && it->first == m) {
 				cout << it->second << " ";
@@ -208,7 +208,7 @@ bool SparseMatrix:: pivot(unsigned int c, vector<double> &b) {
 	double tempScalar = 0.0;
 
 	//Find the maximum entry in the given column
-	for (int i = c; i < rows; i++) {
+	for (unsigned int i = c; i < rows; i++) {
 		Row& currentRow = (*vectOfRowPointers[i]);
 		double temp = currentRow.retrieveValue(c);
 		if (abs(temp) > maxEntry) {
@@ -263,7 +263,7 @@ bool SparseMatrix:: pivotGetZeros(unsigned int c, vector <double> &b) {
 	cout << "Matrix before for loop" << endl;
 	printMatrix();
 	//Every other entry in the column must be a zero
-	for (int i = 0; i < rows; i++) {
+	for (unsigned int i = 0; i < rows; i++) {
 		cout << "i =" << " " << i << endl;
 		//Get the current row
 		Row* currentRow = vectOfRowPointers[i];
