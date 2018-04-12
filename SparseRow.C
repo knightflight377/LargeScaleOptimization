@@ -36,10 +36,10 @@ public:
     }
   }
 
-//Get the length of a row, used in SparseMatrix class
-  int lengthOfRow() {
+//Get the length of a row
+  unsigned int lengthOfRow() {
     SpRow::iterator i = row.begin();
-    int counter = 0;
+    unsigned int counter = 0;
     while (i != row.end()) {
       counter++;
       i++;
@@ -75,33 +75,36 @@ public:
     //column index is valid
       SpRow::iterator it = row.begin();
       while (it != row.end()) {
-        //it points to a genuine row entry
-	     if (it->first == c)
-	       { 
+        //Case 1: it points to a genuine row entry
+	      if (it->first == c) { 
       //update this column
 	      //delete this column if 'v' is effectively zero
 	       if (v>= -tol && v<= tol) {
 	       row.erase(it);
 	       return true;
 	       }
-	     else {
+	       else {
 	      //if v is not within the tolerance, update it
 	       it->second = v;
 	       return true;
 	       }
-	     }
-	     if (it->first > c)
-	       {
+	      }
+       //Case 2: it is greater than c
+	      if (it->first > c) {
          //we've made it past column c, we need to insert before it.
 	       // only insert if 'v' is not effectively zero.
-	       row.insert(it,SpRowEnt(c,v));
-	       return true;
-	       }
+          if (v < -tol || v > tol) {
+	         row.insert(it,SpRowEnt(c,v));
+          }
+	      return true;
+	      }
 	     //current column index is strictly less than 'c'
-	     it++;
+	      it++;
       }  //end of while loop
-    //reached end of list, insert new SpRowEnt here
-    row.insert(it,SpRowEnt(c,v));
+    // Case 3: reached end of list, insert new SpRowEnt here
+    if (v < -tol || v > tol) {
+      row.insert(it,SpRowEnt(c,v));
+    }
     return true;
   }
 }
@@ -171,44 +174,53 @@ public:
     SpRow::iterator i = otherRow.begin();
     SpRow::iterator n = row.begin();
 
-	  while (i != otherRow.end() && n != row.end()) {
+    bool emptyRow = row.empty();
+    bool emptyOtherRow = otherRow.empty();
 
-	//First case: if the column value for rI is less than the column value for row, that means row has a 0 entry
-	    if((i->first < n->first) || (n == row.end())) {
-	      unsigned int columnnumber = i->first;
-	      double value = con * i->second;
-
-	    //If the newly calculated value is not within the tolerance, insert it
-	      if (value <= -tol || value >= tol) {
-	        row.insert(n, SpRowEnt(columnnumber, value));
-	      }
-	      i++;
-	    }
-
-	  //Second case: if the column value for row is less than the column value rI, that means that rI has a 0 entry
-	    if((n->first < i->first) || (i == otherRow.end())) {
-	      n++;
-      }
-
-	  //Third case: if the column values are the same
-	    if(n->first == i->first) {
-	      double nvalue = n->second + con * i->second;
-	    //If the newly calculated value is not within the tolerance, replace row.second with it
-	      if (nvalue <= -tol || nvalue >= tol) {
-	        n->second = nvalue;
-          n++;
-	      }
-        else { //The nvalue is within the tolerance
-          SpRow::iterator nn = n;
-          n++;
-          row.erase(nn);
-        }
-	      i++;
-	    }
+    //If both rows are empty, there's no point in continuing
+    if (emptyRow && emptyOtherRow) {
+      return false;
     }
-      return true;
 
-    //If the function finishes without doing the while loop, return false
-    return false;
+    //Otherwise, we can go ahead and do the replace row operation
+    else {
+	    while (i != otherRow.end() && n != row.end()) {
+
+	      //Case 1: if the column value for rI is less than the column value for row, that means row has a 0 entry
+	      if((i->first < n->first) || (n == row.end())) {
+	        unsigned int columnnumber = i->first;
+	        double value = con * i->second;
+
+	        //If the newly calculated value is not within the tolerance, insert it
+	        if (value < -tol || value > tol) {
+	          row.insert(n, SpRowEnt(columnnumber, value));
+	        }
+	        i++;
+	      }
+
+	      //Case 2: if the column value for row is less than the column value rI, that means that rI has a 0 entry
+	      if((n->first < i->first) || (i == otherRow.end())) {
+	        n++;
+        }
+
+	      //Case 3: if the column values are the same
+	      if(n->first == i->first) {
+	        double nvalue = n->second + con * i->second;
+	        //If the newly calculated value is not within the tolerance, replace row.second with it
+	        if (nvalue < -tol || nvalue > tol) {
+	          n->second = nvalue;
+            n++;
+	        }
+          //The nvalue is within the tolerance  
+          else {
+            SpRow::iterator nn = n;
+            n++;
+            row.erase(nn);
+          }
+	        i++;
+	      }  
+      } //end of while loop
+      return true;
+    } //end of else
   }
 };
