@@ -74,39 +74,38 @@ public:
     else {  
     //column index is valid
       SpRow::iterator it = row.begin();
-      while (it != row.end()) {
-        //Case 1: it points to a genuine row entry
-	      if (it->first == c) { 
-      //update this column
-	      //delete this column if 'v' is effectively zero
-	       if (v>= -tol && v<= tol) {
-	       row.erase(it);
-	       return true;
+        while (it != row.end()) {
+          //Case 1: it points to a genuine row entry
+	       if (it->first == c) { 
+                //Subcase 1: delete this column if 'v' is effectively zero
+	           if (v>= -tol && v<= tol) {
+	               row.erase(it);
+	               return true;
+	           }
+                //Subcase 2: v is not within the tolerance, so update it
+	           else {
+	               it->second = v;
+	               return true;
+	           }
 	       }
-	       else {
-	      //if v is not within the tolerance, update it
-	       it->second = v;
-	       return true;
-	       }
-	      }
-       //Case 2: it is greater than c
-	      if (it->first > c) {
-         //we've made it past column c, we need to insert before it.
-	       // only insert if 'v' is not effectively zero.
-          if (v < -tol || v > tol) {
-	         row.insert(it,SpRowEnt(c,v));
-          }
-	      return true;
-	      }
-	     //current column index is strictly less than 'c'
-	      it++;
-      }  //end of while loop
-    // Case 3: reached end of list, insert new SpRowEnt here
-    if (v < -tol || v > tol) {
-      row.insert(it,SpRowEnt(c,v));
-    }
-    return true;
-  }
+           //Case 2: it is greater than c
+	       if (it->first > c) {
+                //we've made it past column c, we need to insert before it.
+	            // only insert if 'v' is not effectively zero.
+                if (v < -tol || v > tol) {
+	               row.insert(it,SpRowEnt(c,v));
+                }
+	            return true;
+	        }
+	       //current column index is strictly less than 'c'
+	       it++;
+        }  //end of while loop
+        // Case 3: reached end of list, insert new SpRowEnt here
+        if (v < -tol || v > tol) {
+            row.insert(it,SpRowEnt(c,v));
+        }
+        return true;
+  } //end of else
 }
   
 //Deletes the entry at column index c
@@ -119,23 +118,24 @@ public:
   double retrieveValue(unsigned int c) {
     double entry;
     SpRow::iterator m = row.begin();
-    //If there's a column index that matches the given c, return the associated value
+
     while (m != row.end()) {
-      if (m->first == c) {
-        cout << "I'm in the if" << endl;
-        entry = m->second;
-        return entry;
-      }
-      //The entry you're looking for is 0
-      if (m->first > c) {
-        return 0.0;
-      } 
-      //assert -- m->first < c
-      m++;
-}
+        //Case 1: If there's a column index that matches the given c, return the associated value
+        if (m->first == c) {
+            cout << "I'm in the if" << endl;
+            entry = m->second;
+            return entry;
+        }
+       //Case 2: The entry you're looking for is 0
+        if (m->first > c) {
+            return 0.0;
+        } 
+       //assert -- m->first < c
+        m++;
+    }
     //assert you've gone to the end of the row and didn't find the value you were looking for
     return 0.0;
-  }
+}
 
 //This function multiplies the row by a given scalar s
   bool multiplyRowByScalar(double s) {
@@ -146,12 +146,13 @@ public:
     }
     //Otherwise, multiply every entry in the row by the scalar
     SpRow::iterator itt = row.begin();
-      while (itt != row.end()) {
-	       itt->second = s * itt->second;
-	       itt++;
-      }
-      return true;
-  }
+    while (itt != row.end()) {
+	   itt->second = s * itt->second;
+	   itt++;
+    }
+
+    return true;
+}
 
 //Gets the instance of row
   SpRow getRow() {
@@ -179,7 +180,7 @@ public:
 
     //If both rows are empty, there's no point in continuing
     if (emptyRow && emptyOtherRow) {
-      return false;
+        return false;
     }
 
     //Otherwise, we can go ahead and do the replace row operation
@@ -187,40 +188,40 @@ public:
 	    while (i != otherRow.end() && n != row.end()) {
 
 	      //Case 1: if the column value for rI is less than the column value for row, that means row has a 0 entry
-	      if((i->first < n->first) || (n == row.end())) {
-	        unsigned int columnnumber = i->first;
-	        double value = con * i->second;
+	       if((i->first < n->first) || (n == row.end())) {
+	           unsigned int columnnumber = i->first;
+	           double value = con * i->second;
 
 	        //If the newly calculated value is not within the tolerance, insert it
-	        if (value < -tol || value > tol) {
-	          row.insert(n, SpRowEnt(columnnumber, value));
-	        }
+	           if (value < -tol || value > tol) {
+	               row.insert(n, SpRowEnt(columnnumber, value));
+	            }
 	        i++;
 	      }
 
 	      //Case 2: if the column value for row is less than the column value rI, that means that rI has a 0 entry
-	      if((n->first < i->first) || (i == otherRow.end())) {
-	        n++;
-        }
+	       if((n->first < i->first) || (i == otherRow.end())) {
+	           n++;
+            }
 
 	      //Case 3: if the column values are the same
-	      if(n->first == i->first) {
-	        double nvalue = n->second + con * i->second;
+	       if(n->first == i->first) {
+	           double nvalue = n->second + con * i->second;
 	        //If the newly calculated value is not within the tolerance, replace row.second with it
-	        if (nvalue < -tol || nvalue > tol) {
-	          n->second = nvalue;
-            n++;
-	        }
+	           if (nvalue < -tol || nvalue > tol) {
+	               n->second = nvalue;
+                    n++;
+	            }
           //The nvalue is within the tolerance  
-          else {
-            SpRow::iterator nn = n;
-            n++;
-            row.erase(nn);
-          }
-	        i++;
-	      }  
-      } //end of while loop
-      return true;
+                else {
+                    SpRow::iterator nn = n;
+                    n++;
+                    row.erase(nn);
+                }
+	           i++;
+	        }  
+        } //end of while loop
+        return true;
     } //end of else
   }
 };
